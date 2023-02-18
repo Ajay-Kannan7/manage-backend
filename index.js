@@ -4,6 +4,7 @@ let mongoose=require('mongoose');
 let app=express();
 let userModel=require("./model/user-schema")
 let taskModel=require("./model/task-schema")
+let doneTaskModel=require("./model/done-task-schema")
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors());
@@ -80,9 +81,31 @@ app.post("/add-task",(req,res)=>{
 
 app.post("/delete-task",(req,res)=>{
     let content=req.body.content
+    let name=req.body.userName
     taskModel.findOneAndDelete({task:content},(err,user)=>{
         if(user){
             res.send({message:"Task completed!"})
+        }
+        else{
+            console.log(err)
+        }
+    })
+    let doneTask=new doneTaskModel({
+        name,
+        task:content
+    })
+
+    doneTask.save()
+    .then(()=>{console.log("Task Completed!")})
+    .catch(err=>{console.log(err)})
+})
+
+app.post("/task-done",(req,res)=>{
+    let userName=req.body.userName;
+
+    doneTaskModel.find({name:userName},(err,user)=>{
+        if(user){
+            res.send({done:user})
         }
         else{
             console.log(err)
