@@ -113,6 +113,20 @@ app.post("/task-done",(req,res)=>{
     })
 })
 
+app.put("/update-task",(req,res)=>{
+    let updatedValue = req.body.enteredValue;
+    let updatedHeader = req.body.enteredHeader;
+    
+    taskModel.findOneAndUpdate({task:updatedHeader},{task:updatedValue},function(err,user){
+        if(user){
+            res.send({message:"Updated!"})
+        }
+        else{
+            console.log(err);
+        }
+    })
+})
+
 app.post("/",(req,res)=>{
     let userName=req.body.userName;
     taskModel.find({name:userName},(err,user)=>{
